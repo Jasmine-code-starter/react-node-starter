@@ -1,0 +1,21 @@
+.layout-menu {
+    width: 30%;
+}
+.logo {
+    height: 32px;
+    margin: 16px;
+    background: rgba(255, 255, 255, 0.3);
+    text-align: center;
+    line-height: 32px;
+    color: #fff;
+  }
+
+  .layout-content {
+      margin: 20px;
+  }
+
+  .user-center {
+      text-align: right;
+      margin-left: 20px;
+      color: blanchedalmond;
+  }

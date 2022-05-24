@@ -1,0 +1,17 @@
+.profile-btn {
+    margin-left: 133px;
+    margin-right: 20px;
+    width: 80px;
+}
+
+.profile-reset-btn {
+    width: 80px;
+}
+.profile-form {
+    padding-top: 20px !important;
+    background-color: #f0f0f0;
+}
+
+.profile-btn-container {
+    margin-left: 200px;
+}
