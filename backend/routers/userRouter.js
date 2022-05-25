@@ -26,7 +26,7 @@ userRouter.post('/register', expressAsyncHandler(async (req, res) => {
     if (!createUser) {
         return res.errorHanler('Register failed, Please try again!');
     }
-    res.send({ status: 0, message: 'Register success' });
+    res.send({ status: 0, message: 'Register success', id:  createUser.id});
 
 }))
 
@@ -42,7 +42,7 @@ userRouter.post(
         const findUser = await User.findOne({ where: { username: userInfo.username } });
         if (findUser) {
             if (bcrypt.compareSync(userInfo.password, findUser.password)) {
-                return res.send({ status: 0, message: '登录成功!', token: 'Bearer' + generateToken(userInfo) });
+                return res.send({ status: 0, message: '登录成功!', token: 'Bearer' + generateToken(userInfo), id: findUser.id });
             } else {
                 return res.status(401).send({ message: "Invalid email or password" });
             }

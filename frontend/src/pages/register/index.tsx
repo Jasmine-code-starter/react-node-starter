@@ -17,6 +17,7 @@ const Register = () => {
         }
 
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.id);
         navigate('/login');
 
       };

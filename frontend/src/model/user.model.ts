@@ -3,7 +3,7 @@ export interface IUser {
     userName: string;
     firstName: string;
     lastName: string;
-    gender: Gender;
+    gender: string;
     birthDate: Date;
 }
 

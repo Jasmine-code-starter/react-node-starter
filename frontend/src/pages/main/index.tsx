@@ -1,9 +1,12 @@
 import './index.css';
 import { Menu, MenuProps  } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PieChartOutlined, DesktopOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
+import axios from 'axios';
+import moment from 'moment';
+import { IUser } from '../../model/user.model';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -28,25 +31,29 @@ function getItem(
 
 const Main = () => {
     const items: MenuItem[] = [
-        getItem('人员', '1', <PieChartOutlined />),
-        getItem('团队', '2', <DesktopOutlined />),
+        getItem('User List', '1', <PieChartOutlined />),
+        getItem('Profile', '2', <DesktopOutlined />),
     ];
-    const [collapsed] = useState(false);
+    const [rowData, setRowData] = useState();
 
     const userCenterUrl = '/profile';
 
-    const [rowData] = useState([
-        {make: "Toyota", model: "Celica", price: 35000},
-        {make: "Ford", model: "Mondeo", price: 32000},
-        {make: "Porsche", model: "Boxster", price: 72000}
-    ]);
-    
-    const [columnDefs] = useState([
-        { field: 'FirstName' },
-        { field: 'LastName' },
-        { field: 'Gender' },
-        { field: 'Birth Date' }
-    ])
+    useEffect(() => {
+        axios.get('http://127.0.0.1:3007/api/user')
+        .then(result => result.data.map((item: IUser, index: number) => ({...item, index: index + 1})))
+        .then(data => setRowData(data))
+    }, []);
+
+    const [columnDefs, setColumnDefs] = useState([
+        {headerName: '#',  field: 'index'},
+        {field: 'firstname', filter: true},
+        {field: 'lastname', filter: true},
+        {field: 'gender'},
+        {headerName: 'Date of Birth',  field: 'birthdate', valueFormatter: (data: any) => {
+            return moment(data.value).format('MM/DD/YYYY');
+
+        }}
+      ]);
 
     return (
         <div className="layout-container">
@@ -58,20 +65,22 @@ const Main = () => {
                         defaultOpenKeys={['sub1']}
                         mode="inline"
                         theme="dark"
-                        inlineCollapsed={collapsed}
                         items={items}/>
                 </Sider>
                 <Layout>
                     <Header>
                         <div className="user-center">
-                        <a href={userCenterUrl}>User Center</a>
+                            <a href={userCenterUrl}>User Center</a>
+                            <a>Album</a>
                         </div>
                     </Header>
                     <Content className="layout-content">
-                    <div className="ag-theme-alpine" style={{height: 400, width: 803}}>
+                    <div className="ag-theme-alpine" style={{height: 400, width: 800, maxWidth: 1200}}>
                         <AgGridReact
                             rowData={rowData}
-                            columnDefs={columnDefs}>
+                            columnDefs={columnDefs}
+                            animateRows={true}
+                        >
                         </AgGridReact>
                     </div>
                     </Content>

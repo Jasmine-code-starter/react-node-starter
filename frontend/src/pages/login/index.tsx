@@ -17,6 +17,7 @@ const Login = () => {
         }
 
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.id);
         navigate('/');
 
       };

@@ -1,12 +1,28 @@
 import { Button, Form, Input, message, Select, DatePicker } from 'antd';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './index.css';
 const { Option } = Select;
 
 const Profile = () => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     const onFinish = async(values: any) => {
-        console.log(values, 'values');
+
+        const userId: string = JSON.stringify(JSON.parse(localStorage.getItem('userId')!));
+        const { data } = await axios.put(`http://127.0.0.1:3007/api/user/update/${userId}`, values);
+        if (data.status === 1) {
+            message.error(data.message);
+            return;
+        }
+
+        if (data.status === 0) {
+            message.success(data.message);
+        }
+
+        localStorage.setItem('token', data.token);
+        navigate('/');
 
       };
 
@@ -50,13 +66,13 @@ const Profile = () => {
 
             <Form.Item name="gender" label="Gender" rules={[{ required: true }]} className="login-item">
                 <Select placeholder="Please Select a the gender" allowClear>
-                <Option value="0">male</Option>
-                <Option value="1">female</Option>
-                <Option value="2">other</Option>
+                <Option value="male">male</Option>
+                <Option value="female">female</Option>
+                <Option value="other">other</Option>
                 </Select>
             </Form.Item>
 
-            <Form.Item name="birthDate" label="Birthdate" rules={[{ required: true, message: "yyyy-MM-DD" }]} className="login-item">
+            <Form.Item name="birthDate" label="Birthdate" rules={[{ required: true, message: "yyyy/MM/DD" }]} className="login-item">
                 <DatePicker format="YYYY-MM-DD"/>
             </Form.Item>
 
