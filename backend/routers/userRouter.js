@@ -60,7 +60,6 @@ userRouter.post(
 userRouter.put(
     '/update/:id',
     expressAsyncHandler(async (req, res) => {
-        console.log(req.params.id);
         let user = await User.findByPk(req.params.id);
         if (user) {
             user.username = req.body.username || user.username;
@@ -83,7 +82,6 @@ userRouter.put(
 userRouter.get(
     '/:id',
     expressAsyncHandler(async (req, res) => {
-        console.log(req.params.id);
         let user = await User.findByPk(req.params.id);
         if (user) {
             res.send(user);
@@ -98,7 +96,6 @@ userRouter.get(
 userRouter.get(
     '/',
     expressAsyncHandler(async (req, res) => {
-        // console.log(req.params.id);
         const users = await User.findAll();
         res.send(users);
 }));
@@ -110,8 +107,7 @@ const storage = multer.diskStorage({
         cb(null, DIR)
     },
     filename: (req, file, cb) => {
-        // const filename = file.originalname.toLowerCase().split('').join('-');
-        cb(null, uuid() + '-' +  file.originalname)
+        cb(null, uuid().substring(0, 8) + '-' +  file.originalname)
     }
 })
 
@@ -135,9 +131,10 @@ const upload = multer({
 
 userRouter.post(
     '/upload-images',
-    upload.array('imgCollection', 6),
+    upload.array('imageCollection', 6),
     expressAsyncHandler(async (req, res, next) => {
         const filesString = req.files.map(file => file.filename).join(';');
+
         const album = await Album.create({
             imageCollection: filesString,
             userId: req.body.userId
@@ -157,19 +154,21 @@ userRouter.get(
     '/:id/upload-images',
     expressAsyncHandler(async (req, res) => {
         console.log(req.params.id);
-        const findAlbum = await Album.findOne({ where: { userId: req.params.id } });
+        const findAlbums = await Album.findAll({ where: { userId: req.params.id } });
 
-
-        if (!findAlbum) {
+        if (findAlbums.length === 0) {
             return res.errorHanler('Failed');
         }
 
-        let files = findAlbum.imageCollection.split(';');
-        console.log(files, 'files');
+        let files = [];
+        findAlbums.map(item => item.imageCollection).forEach(element => {
+            files = [...files, ...element.split(';')]
+        });
+
         const url = req.protocol + '://' + req.get('host');
         const reqFiles = files.map(file => url + '/public/images/' + file);
     
-        res.status(200).send({status: 0, album: reqFiles});
+        res.status(200).send({status: 0, albums: reqFiles});
 }));
 
 

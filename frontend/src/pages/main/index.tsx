@@ -7,6 +7,8 @@ import axios from 'axios';
 import moment from 'moment';
 import { IUser } from '../../model/user.model';
 import Profile from '../profile';
+import Album from '../album';
+import ImagesUpload from '../images-upload';
 
 const { TabPane } = Tabs;
 
@@ -54,8 +56,11 @@ const Main = () => {
                 <TabPane tab="Profile" key="2">
                     <Profile/>
                 </TabPane>
-                <TabPane tab="Album" key="3">
-                Album
+                <TabPane tab="ImagesUpload" key="3">
+                    <ImagesUpload/>
+                </TabPane>
+                <TabPane tab="Album" key="4">
+                    <Album/>
                 </TabPane>
             </Tabs>
             </Layout>
