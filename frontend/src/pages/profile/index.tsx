@@ -1,12 +1,25 @@
 import { Button, Form, Input, message, Select, DatePicker } from 'antd';
 import axios from 'axios';
+import moment from 'moment';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IUser } from '../../model/user.model';
 import './index.css';
 const { Option } = Select;
 
 const Profile = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const userId: string = JSON.stringify(JSON.parse(localStorage.getItem('userId')!));
+        axios.get(`http://127.0.0.1:3007/api/user/${userId}`)
+            .then(result => result.data)
+            .then((res: IUser) => {
+                const {firstname, lastname, birthdate, gender} = res;
+                form.setFieldsValue({firstname, lastname, birthdate: moment(birthdate), gender});
+            })
+    });
 
     const onFinish = async(values: any) => {
 
@@ -36,8 +49,8 @@ const Profile = () => {
     
 
     return (
-        <div className="login-container">
-            <Form validateTrigger={['onBlur', 'onChange']}
+        <div className="profile-tab">
+            <Form validateTrigger={['onBlur', 'onChange']} form={form}
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
@@ -49,10 +62,10 @@ const Profile = () => {
             <Form.Item
                 label="FirstName"
                 name="firstname"
-                rules={[{ required: true, message: 'Please enter firstName!', validateTrigger: 'onBlur' }]}
+                rules={[{ required: true, message: 'Please enter firstname!', validateTrigger: 'onBlur' }]}
                 className="login-item"
             >
-                <Input placeholder="Please enter firstName"/>
+                <Input placeholder="Please enter firstname"/>
             </Form.Item>
 
             <Form.Item

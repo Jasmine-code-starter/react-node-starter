@@ -81,6 +81,21 @@ userRouter.put(
 }));
 
 userRouter.get(
+    '/:id',
+    expressAsyncHandler(async (req, res) => {
+        console.log(req.params.id);
+        let user = await User.findByPk(req.params.id);
+        if (user) {
+            res.send(user);
+        } else {
+            return res.errorHanler('update failed');
+        }
+
+}));
+
+
+
+userRouter.get(
     '/',
     expressAsyncHandler(async (req, res) => {
         console.log(req.params.id);

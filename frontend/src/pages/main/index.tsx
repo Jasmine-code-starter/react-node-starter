@@ -1,42 +1,20 @@
 import './index.css';
-import { Menu, MenuProps } from 'antd';
+import { Tabs } from 'antd';
 import { useEffect, useState } from 'react';
-import { PieChartOutlined, DesktopOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import moment from 'moment';
 import { IUser } from '../../model/user.model';
+import Profile from '../profile';
 
-const { Header, Footer, Sider, Content } = Layout;
+const { TabPane } = Tabs;
 
-type MenuItem = Required<MenuProps>['items'][number];
 
-function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group',
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    } as MenuItem;
-}
 
 
 const Main = () => {
-    const items: MenuItem[] = [
-        getItem('User List', '1', <PieChartOutlined />),
-        getItem('Profile', '2', <DesktopOutlined />),
-    ];
     const [rowData, setRowData] = useState();
-
-    const userCenterUrl = '/profile';
 
     useEffect(() => {
         axios.get('http://127.0.0.1:3007/api/user')
@@ -57,36 +35,29 @@ const Main = () => {
         }
     ]);
 
+    const tabChange = (activeKey: string) => {}
+
     return (
         <div className="layout-container">
             <Layout>
-                <Sider>
-                    <div className="logo">Hello World</div>
-                    <Menu
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
-                        mode="inline"
-                        theme="dark"
-                        items={items} />
-                </Sider>
-                <Layout>
-                    <Header>
-                        <div className="user-center">
-                            <a href={userCenterUrl}>User Center</a> &nbsp;|&nbsp;&nbsp;<a>Album</a>
-                        </div>
-                    </Header>
-                    <Content className="layout-content">
-                        <div className="ag-theme-alpine" style={{ height: 400, width: 800, maxWidth: 1200 }}>
-                            <AgGridReact
-                                rowData={rowData}
-                                columnDefs={columnDefs}
-                                animateRows={true}
-                            >
-                            </AgGridReact>
-                        </div>
-                    </Content>
-                    <Footer>Footer</Footer>
-                </Layout>
+            <Tabs defaultActiveKey="1" onChange={tabChange} size="large" className="layout-tab">
+                <TabPane tab="Users" key="1">
+                <div className="ag-theme-alpine" style={{ height: 400, width: 800, maxWidth: 1200 }}>
+                    <AgGridReact
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        animateRows={true}
+                    >
+                    </AgGridReact>
+                </div>
+                </TabPane>
+                <TabPane tab="Profile" key="2">
+                    <Profile/>
+                </TabPane>
+                <TabPane tab="Album" key="3">
+                Album
+                </TabPane>
+            </Tabs>
             </Layout>
         </div>
     )
