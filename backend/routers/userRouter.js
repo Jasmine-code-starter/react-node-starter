@@ -6,7 +6,7 @@ import User from '../models/userModel.js';
 import multer from 'multer';
 import path from 'path';
 import Album from '../models/albumModel.js';
-// import { UUIDV4 } from 'sequelize/types';
+import { uuid } from 'uuidv4';
 
 const userRouter = express.Router();
 
@@ -98,63 +98,80 @@ userRouter.get(
 userRouter.get(
     '/',
     expressAsyncHandler(async (req, res) => {
-        console.log(req.params.id);
+        // console.log(req.params.id);
         const users = await User.findAll();
         res.send(users);
 }));
 
-const DIR = './public';
+const DIR = './public/images';
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, DIR)
-//     },
-//     filename: (req, file, cb) => {
-//         const filename = file.originalname.toLowerCase().split('').join('-');
-//         cb(null, UUIDV4 + '-' +  path.extname(file.originalname))
-//     }
-// })
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, DIR)
+    },
+    filename: (req, file, cb) => {
+        // const filename = file.originalname.toLowerCase().split('').join('-');
+        cb(null, uuid() + '-' +  file.originalname)
+    }
+})
 
-// const upload = multer({
-//     storage: storage,
-//     limits: {fileSize: '1000000'},
-//     fileFilter: (req, file, cb) => {
-//         const fileTypes = /jpeg|jpg|png|gif/;
-//         const mimeType = fileTypes.test(file.mimetype);
-//         const extname = fileTypes.test(path.extname(file.originalname));
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: '1000000'},
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /jpeg|jpg|png|gif/;
+        const mimeType = fileTypes.test(file.mimetype);
+        const extname = fileTypes.test(path.extname(file.originalname));
 
-//         if (mimeType && extname) {
-//             return cb(null, true);
-//         } else {
-//             cb(null, false);
-//             return cb(new Error('Give proper files formate to upload'));
-//         }
-//     }
-// })
+        if (mimeType && extname) {
+            return cb(null, true);
+        } else {
+            cb(null, false);
+            return cb(new Error('Give proper files formate to upload'));
+        }
+    }
+})
 
 
-// userRouter.post(
-//     'upload-images',
-//     upload.array('imgCollection', 6),
-//     expressAsyncHandler(async (req, res, next) => {
-//         console.log(req.body);
-//         const reqFiles = [];
-//         const url = req.protocol + '://' + req.get('host')
-//         for (var i = 0; i < req.files.length; i++) {
-//             reqFiles.push(url + '/public/' + req.files[i].filename)
-//         }
+userRouter.post(
+    '/upload-images',
+    upload.array('imgCollection', 6),
+    expressAsyncHandler(async (req, res, next) => {
+        const filesString = req.files.map(file => file.filename).join(';');
+        const album = await Album.create({
+            imageCollection: filesString,
+            userId: req.body.userId
+        });
 
-//         const album = await Album.create({
-//             imgCollection: reqFiles.join(';'),
-//         });
+        await album.save();
 
-//         await album.save();
+        if (album) {
+            res.status(200).send({status: 0, message: 'upload done!', album: album});
+        } else {
+            return res.errorHanler('upload failed');
+        }
+}));
 
-//         if (album) {
-//             res.status(200).send({status: 0, message: 'upload done!'});
-//         } else {
-//             return res.errorHanler('upload failed');
-//         }
-// }));
+
+userRouter.get(
+    '/:id/upload-images',
+    expressAsyncHandler(async (req, res) => {
+        console.log(req.params.id);
+        const findAlbum = await Album.findOne({ where: { userId: req.params.id } });
+
+
+        if (!findAlbum) {
+            return res.errorHanler('Failed');
+        }
+
+        let files = findAlbum.imageCollection.split(';');
+        console.log(files, 'files');
+        const url = req.protocol + '://' + req.get('host');
+        const reqFiles = files.map(file => url + '/public/images/' + file);
+    
+        res.status(200).send({status: 0, album: reqFiles});
+}));
+
+
 
 export default userRouter;

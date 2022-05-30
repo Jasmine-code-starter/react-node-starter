@@ -37,6 +37,8 @@ app.use((err, req, res, next) => {
     next();
 })
 
+app.use('/public', express.static('./public'));
+
 // app.use(expressjwt({ secret: process.env.JWT_SECRET }));
 app.use('/api/user', userRouter);
 app.get('/', (req, res) => {
