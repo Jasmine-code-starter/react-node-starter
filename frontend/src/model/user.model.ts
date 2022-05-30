@@ -5,6 +5,7 @@ export interface IUser {
     lastName: string;
     gender: string;
     birthDate: Date;
+    password: string;
 }
 
 export enum Gender {

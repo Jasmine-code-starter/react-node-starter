@@ -57,7 +57,7 @@ const Profile = () => {
 
             <Form.Item
                 label="LastName"
-                name="lassword"
+                name="lastname"
                 rules={[{ required: true, message: 'Please enter lastName!' }]}
                 className="login-item"
             >
@@ -72,7 +72,7 @@ const Profile = () => {
                 </Select>
             </Form.Item>
 
-            <Form.Item name="birthDate" label="Birthdate" rules={[{ required: true, message: "yyyy/MM/DD" }]} className="login-item">
+            <Form.Item name="birthdate" label="Birthdate" rules={[{ required: true, message: "yyyy/MM/DD" }]} className="login-item">
                 <DatePicker format="YYYY-MM-DD"/>
             </Form.Item>
 
