@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRouter from "./routers/userRouter.js";
 import Joi from '@hapi/joi';
 import { expressjwt } from 'express-jwt';
+import './db/index.js';
 
 
 dotenv.config();
@@ -13,7 +14,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-import './db/index.js';
 
 
 // 统一处理失败处理
@@ -30,17 +30,19 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     if (err instanceof Joi.ValidationError) res.errorHanler(err);
-
     if (err.name === 'UnauthorizedError') return res.errorHanler('身份认证失败');
-
     res.errorHanler(err);
     next();
 })
 
 app.use('/public', express.static('./public'));
-
-// app.use(expressjwt({ secret: process.env.JWT_SECRET }));
+app.use(expressjwt({ secret: process.env.JWT_SECRET, algorithms: ['RS256'] }).unless({path: [/^\/api/]}));
 app.use('/api/user', userRouter);
+
+app.use((err, req, res, next) => {
+    res.status(500).send({ message: err.message });
+  });
+
 app.get('/', (req, res) => {
     res.send('server is ready');
 })

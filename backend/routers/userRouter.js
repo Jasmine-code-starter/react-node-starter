@@ -13,13 +13,9 @@ const userRouter = express.Router();
 userRouter.post('/register', expressAsyncHandler(async (req, res) => {
     const userInfo = req.body;
 
-    if (!userInfo.username || !userInfo.password) {
-        return res.send({ status: 1, message: '输入不合法' });
-    }
-
     const findUser = await User.findOne({ where: { username: userInfo.username } });
     if (findUser) {
-        return res.errorHanler('用户名被占用，请更换用户名');
+        return res.errorHanler('Username has existed, Please change the username!');
     }
 
     const createUser = await User.create({
@@ -46,7 +42,7 @@ userRouter.post(
         const findUser = await User.findOne({ where: { username: userInfo.username } });
         if (findUser) {
             if (bcrypt.compareSync(userInfo.password, findUser.password)) {
-                return res.send({ status: 0, message: '登录成功!', token: 'Bearer' + generateToken(userInfo), id: findUser.id });
+                return res.send({ status: 0, message: 'Login success!', token: 'Bearer' + generateToken(userInfo), id: findUser.id });
             } else {
                 return res.status(401).send({ message: "Invalid email or password" });
             }
@@ -54,7 +50,19 @@ userRouter.post(
 
         res.errorHanler('User is not exist，Please register first！');
 
-    }));
+}));
+
+userRouter.get(
+    '/:id',
+    expressAsyncHandler(async (req, res) => {
+        let user = await User.findByPk(req.params.id);
+        if (user) {
+            res.send(user);
+        } else {
+            return res.status(404).send({message: 'User not found!'})
+        }
+
+}));
 
 
 userRouter.put(
@@ -79,17 +87,6 @@ userRouter.put(
 
 }));
 
-userRouter.get(
-    '/:id',
-    expressAsyncHandler(async (req, res) => {
-        let user = await User.findByPk(req.params.id);
-        if (user) {
-            res.send(user);
-        } else {
-            return res.errorHanler('update failed');
-        }
-
-}));
 
 
 
@@ -99,6 +96,24 @@ userRouter.get(
         const users = await User.findAll();
         res.send(users);
 }));
+
+
+userRouter.delete(
+    '/:id',
+    expressAsyncHandler(async(req, res) => {
+        const user = await User.findByPk(req.params.id);
+        if (user) {
+            const deleteUser = await user.destroy(user);
+            res.send({ message: "User Deleted", user: deleteUser });
+        } else {
+            res.status(404).send({ message: "User Not Found" });
+        }
+
+    })
+)
+
+
+
 
 const DIR = './public/images';
 
@@ -143,7 +158,7 @@ userRouter.post(
         await album.save();
 
         if (album) {
-            res.status(200).send({status: 0, message: 'upload done!', album: album});
+            res.status(200).send({status: 0, message: 'Upload done!', album: album});
         } else {
             return res.errorHanler('upload failed');
         }

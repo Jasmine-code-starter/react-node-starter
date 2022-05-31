@@ -1,17 +1,21 @@
 .login-container {
-    height: 700px;
-    background-color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 700px;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-form {
-    width: 500px;
-    background-color: #fff;
-    padding-top: 20px;
+  width: 500px;
+  background-color: #fff;
+  padding-top: 20px !important;
 }
 
 .login-item {
-    width: 400px;
+  width: 400px;
+}
+
+.login-form-button {
+  margin-left: 133px;
 }

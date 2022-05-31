@@ -9,7 +9,11 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
+  // render App to id="root" dom node
+  // When in strict mode， useEffect  will excute two times
+  // It can be removed in common
   <React.StrictMode>
     <App />
   </React.StrictMode>
