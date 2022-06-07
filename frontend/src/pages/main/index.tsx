@@ -9,7 +9,7 @@ import { IUser } from "../../model/user.model";
 import Profile from "../profile";
 import Album from "../album";
 import ImagesUpload from "../images-upload";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const Main = () => {
@@ -86,9 +86,6 @@ const Main = () => {
           </TabPane>
         </Tabs>
       </Layout>
-      {/* ) : (
-        <Link to={`/register`}></Link>
-      )} */}
     </div>
   );
 };
