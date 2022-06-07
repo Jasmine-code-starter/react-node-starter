@@ -12,7 +12,6 @@ import ImagesUpload from "../images-upload";
 import { Link, useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
-
 const Main = () => {
   const [rowData, setRowData] = useState();
   const navigate = useNavigate();
@@ -51,7 +50,7 @@ const Main = () => {
   }
 
   function linkToRegister() {
-    navigate("/register");
+    navigate("/register", { replace: true });
   }
 
   return (

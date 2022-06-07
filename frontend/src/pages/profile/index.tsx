@@ -27,7 +27,7 @@ const Profile = () => {
           gender,
         });
       });
-  });
+  }, []);
 
   const onFinish = async (values: any) => {
     const userId: string = JSON.stringify(
