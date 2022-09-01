@@ -1,6 +1,6 @@
 # react-node-test
 
-A system about human resource management; A practice of react & node.
+A practice of react & node.
 
 The first step of a front-end to the full stack.
 
