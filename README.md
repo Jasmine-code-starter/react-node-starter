@@ -1,8 +1,8 @@
-# react-node-test
+# react-node-starter
 
-A practice of react & node.
+A practice for starter to Learn react & node.
 
-The first step of a front-end to the full stack.
+The first step for a front-end to the full stack engineer.
 
-It's really interesting to learn new skills.
+It's really very interesting to touch new skills.
 
